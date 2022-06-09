@@ -60,12 +60,15 @@ for i in range(limit):
     remainder = int(operand)-int(diff)
 ##    print(' '+'-{0:>{width}}'.format(str(diff),width=w))#+'\ta:{}\tb:{}'.format(a,b))
 
-##print('The square root of {} to the {} digit is:'.format(num,prec))
+print('The square root of {} to the {} digit is:'.format(num,prec))
 for x in range(len(result)):
     if x == int(dot_pos/2+0.5):
         print('.'+result[x],end = '',flush=True)
     else:
         print(result[x],end = '', flush=True)
 
-#print(dot_pos)
-#input()
+print(dot_pos)
+
+#Ho cambiato questo e si deve vedere su Github
+
+input()
