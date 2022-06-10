@@ -37,15 +37,17 @@ for i in range(top):
         print(x[i],end='\r',flush=True)
     
     y[i] = len(sequence)
-    if y[i] == max (y): maxi_len=i
+    if y[i] > y[maxi_len]: maxi_len=i
     sequence = []
     loop = False
 
 print("End of calculation, graph elaborating")
 
+print("Longest streak is for starting number: ", x[maxi_len]," with lenght: ", y[maxi_len])
+
 plt.plot(x,y,'.', color='black')
 plt.show()
 
-print("Longest streak is for starting number: ", x[maxi_len]," with lenght: ", y[maxi_len])
+
 
 input()
