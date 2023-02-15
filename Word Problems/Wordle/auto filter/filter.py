@@ -1,7 +1,10 @@
 from Luca.utils import yes
+import pathlib as pth
+PATH = pth.Path(__file__).parent.absolute()
 
 def array_maker():
-    with open(r"C:\Users\lucas\OneDrive\Code\Altro\Word Problems\Wordle\auto filter\wordle.txt","r") as file:
+    wordle_link = PATH.joinpath("wordle.txt")
+    with open(wordle_link,"r") as file:
         array = [list(line.rstrip()) for line in file]
     return array
 

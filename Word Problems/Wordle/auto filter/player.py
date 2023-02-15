@@ -3,9 +3,11 @@ from filter import *
 from Luca.utils import yes
 from Luca.formatter.formatter import grid
 import numpy as np
+import pathlib as pth
 LEN_OF_WORDS = 5
 WORDLE_LIMIT = 6
 COLOURS = ["*","?","$"]
+PATH = pth.Path(__file__).parent.absolute()
 
 def bit_calc(previous, current):
     #raise error if current > previous
@@ -147,7 +149,8 @@ def simulation(initial_best, wordles, colour_set, solution):
 if __name__ == "__main__":
     wordles = array_maker()
     wordle_best = []
-    with open(r"C:\Users\lucas\OneDrive\Code\Altro\Word Problems\Wordle\auto filter\onestepexpectedinfo.txt", "r") as file:
+    wordle_link = PATH.joinpath("onestepexpectedinfo.txt")
+    with open(wordle_link, "r") as file:
         count = 0
         for line in file.readlines():
             if count < WORDLE_LIMIT:
