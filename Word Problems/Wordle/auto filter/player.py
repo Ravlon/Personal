@@ -1,8 +1,8 @@
 import sys
 from filter import *
-from Luca.utils import yes
 from Luca.formatter.formatter import grid
 import numpy as np
+from argparse import ArgumentParser
 import pathlib as pth
 LEN_OF_WORDS = 5
 WORDLE_LIMIT = 6
@@ -89,36 +89,7 @@ def best_guess(filtered_array, colour_set, top_n = 5):
     result_array = sorted(result_array, reverse=True)
     return result_array[:top_n]
 
-def game(initial_best, wordles, colour_set):
-    header = ["Words","Color","Bests"]
-    matrix = [["","*****",i] for i in initial_best]
-    forms = [(" ",">","5"),("*",">","5"),(" ",">","10")]
-    size = len(wordles)
-    attempt = 0
-    while True:
-        print(" |[     ]|[     ]| " + "{: >10}".format(str(size))+" |")
-        table = grid(matrix, forms, header)
-        print(table)
-        sys.stdout.write("\x1b[1A"*(WORDLE_LIMIT+3))
-        print("\r |[", end = "")
-        word = input()
-        matrix[attempt][0] = word
-        sys.stdout.write("\x1b[1A"*(1))
-        print("\r |["+ word + "]|[", end = "")
-        result = input()
-        matrix[attempt][1] = result
-        new_wordles = filter(wordles, [i[0] for i in matrix[:attempt+1]],[i[1] for i in matrix[:attempt+1]])
-        size = len(new_wordles)
-        new_best = best_guess(new_wordles, colour_set, top_n=WORDLE_LIMIT)
-        for i in range(WORDLE_LIMIT):
-            if i<len(new_best):
-                matrix[i][2] = "".join(new_best[i][1]) + " " + str(new_best[i][0])
-            else:
-                matrix[i][2] = "-"*5
-        sys.stdout.write("\x1b[1A"*(1))
-        attempt += 1
-
-def simulation(initial_best, wordles, colour_set, solution):
+def game(initial_best, wordles, colour_set, solution = False):
     header = ["Words","Color","Bests"]
     matrix = [["","*****",i] for i in initial_best]
     forms = [(" ",">","5"),("*",">","5"),(" ",">","10")]
@@ -126,7 +97,7 @@ def simulation(initial_best, wordles, colour_set, solution):
     previous_size = size
     attempt = 0
     while True:
-        print(" |[     ]|       | " + "{: >10}".format(str(size))+" | "+str(round(bit_calc(previous_size,size),2)))
+        print(" |[     ]|[     ]| " + "{: >10}".format(str(size))+" | "+str(round(bit_calc(previous_size,size),2)))
         table = grid(matrix, forms, header)
         print(table)
         sys.stdout.write("\x1b[1A"*(WORDLE_LIMIT+3))
@@ -134,7 +105,13 @@ def simulation(initial_best, wordles, colour_set, solution):
         word = input()
         matrix[attempt][0] = word
         sys.stdout.write("\x1b[1A"*(1))
-        matrix[attempt][1] = result(list(word), list(solution))
+        if not solution:
+            print("\r |["+ word + "]|[", end = "")
+            result_colour = input()
+            matrix[attempt][1] = result_colour
+            sys.stdout.write("\x1b[1A"*(1))
+        else:
+            matrix[attempt][1] = result(list(word), list(solution))
         new_wordles = filter(wordles, [i[0] for i in matrix[:attempt+1]],[i[1] for i in matrix[:attempt+1]])
         previous_size = size
         size = len(new_wordles)
@@ -145,6 +122,7 @@ def simulation(initial_best, wordles, colour_set, solution):
             else:
                 matrix[i][2] = "-"*5
         attempt += 1
+    
 
 if __name__ == "__main__":
     wordles = array_maker()
@@ -160,10 +138,17 @@ if __name__ == "__main__":
             else:
                 break
     colour_list = possible_results(1)
-    game_bool = yes("Solved game? ")
     
-    if game_bool:
-        answer = input("Solution of the game:")
-        simulation(wordle_best, wordles, colour_list, answer)
-    else:
-        game(wordle_best, wordles, colour_list)
+    parser = ArgumentParser()
+    parser.add_argument("-s","--solved")
+    args = parser.parse_args()
+    while True:
+        try:
+            if args.solved:
+                game(wordle_best, wordles, colour_list, solution = args.solved)
+            else:
+                game(wordle_best,wordles,colour_list)
+        except IndexError:
+            continue
+        except:
+            break
